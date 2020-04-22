@@ -19,12 +19,12 @@ import io.swagger.annotations.Api;
 
 @Api
 @RestController
-@RequestMapping("/api/rest/user")
+@RequestMapping("/api/user")
 public class UserRestController {
     @Autowired
     private UserService userService;
 
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_CLIENT')")
+
     @PostMapping("/register")
     public UserModel register(@RequestBody @Valid UserRequestModel request, BindingResult result, HttpServletResponse response) throws IOException {
         UserModel userModel = new UserModel();

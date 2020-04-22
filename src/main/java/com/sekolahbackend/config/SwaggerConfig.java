@@ -31,7 +31,7 @@ public class SwaggerConfig extends WebMvcConfigurationSupport {
     public Docket restApi() {
         return new Docket(DocumentationType.SWAGGER_2).groupName("APPS").select()
                 .apis(RequestHandlerSelectors.basePackage("com.sekolahbackend"))
-                .paths(regex("/api/rest.*")).build()
+                .paths(regex("/api.*")).build()
                 .securityContexts(Collections.singletonList(securityContext()))
                 .securitySchemes(Arrays.asList(securitySchema())).apiInfo(metaData());
     }
