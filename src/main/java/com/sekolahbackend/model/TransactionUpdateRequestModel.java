@@ -3,19 +3,18 @@ package com.sekolahbackend.model;
 import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
+import com.sekolahbackend.entity.Transaction.TransactionStatus;
 import lombok.Data;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class FavouriteBookRequestModel {
+public class TransactionUpdateRequestModel {
 
     @NotNull
-    private Integer userId;
+    private Integer transactionId;
 
     @NotNull
-    private Integer bookId;
+    private TransactionStatus transactionStatus;
 
-    private String optional;
-
+    private String receiptImageUrl;
 }

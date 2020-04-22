@@ -22,26 +22,32 @@ import lombok.Data;
 @Data
 @MappedSuperclass
 public class Persistence {
+
     public enum Status {ACTIVE, NOT_ACTIVE}
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column
     private Integer id;
+
     @Column(length = 50)
     @CreatedBy
     private String createdBy;
+
     @Column(length = 50)
     @LastModifiedBy
     private String updatedBy;
+
     @Column
     @Temporal(TemporalType.TIMESTAMP)
     @CreatedDate
     private Date createdTime;
+
     @Column
     @Temporal(TemporalType.TIMESTAMP)
     @LastModifiedDate
     private Date updatedTime;
+
     @Column(length = 50)
     @Enumerated(EnumType.STRING)
     private Status status;
