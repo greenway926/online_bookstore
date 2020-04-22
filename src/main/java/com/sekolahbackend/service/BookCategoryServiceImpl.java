@@ -17,7 +17,8 @@ import com.sekolahbackend.repository.BookCategoryRepository;
 
 @Service
 public class BookCategoryServiceImpl implements BookCategoryService {
-    @Autowired
+
+    @Autowired // inject object secara otomatis
     private BookCategoryRepository bookCategoryRepository;
 
     @Override
