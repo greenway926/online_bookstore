@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.BeanUtils;
+
 import com.sekolahbackend.entity.Transaction;
 import com.sekolahbackend.model.BookCategoryModel;
 import com.sekolahbackend.model.BookModel;
@@ -12,39 +13,40 @@ import com.sekolahbackend.model.UserModel;
 
 public class TransactionModelMapper {
 
-    public static TransactionModel constructModel(Transaction transaction) {
-        UserModel userModel = new UserModel();
-        BeanUtils.copyProperties(transaction.getUser(), userModel);
+	public static TransactionModel constructModel(Transaction transaction) {
+		UserModel userModel = new UserModel();
+		BeanUtils.copyProperties(transaction.getUser(), userModel);
 
-        TransactionModel model = new TransactionModel();
-        model.setUserModel(userModel);
-        List<TransactionModel.DetailModel> details = new ArrayList<>();
-        transaction.getTransactionDetails().forEach(data -> {
-            TransactionModel.DetailModel detail = new TransactionModel.DetailModel();
-            BookModel bookModel = new BookModel();
-            BookCategoryModel bookCategoryModel = new BookCategoryModel();
+		TransactionModel model = new TransactionModel();
+		model.setUserModel(userModel);
 
-            BeanUtils.copyProperties(data.getBook().getBookCategory(), bookCategoryModel);
-            bookModel.setBookCategory(bookCategoryModel);
+		List<TransactionModel.DetailModel> details = new ArrayList<>();
+		transaction.getTransactionDetails().forEach(data -> {
+			TransactionModel.DetailModel detail = new TransactionModel.DetailModel();
+			BookModel bookModel = new BookModel();
+			BookCategoryModel bookCategoryModel = new BookCategoryModel();
 
-            BeanUtils.copyProperties(data.getBook(), bookModel);
-            detail.setBookModel(bookModel);
+			BeanUtils.copyProperties(data.getBook().getBookCategory(), bookCategoryModel);
+			bookModel.setBookCategory(bookCategoryModel);
 
-            BeanUtils.copyProperties(data, detail);
-            details.add(detail);
-        });
-        model.setDetails(details);
+			BeanUtils.copyProperties(data.getBook(), bookModel);
+			detail.setBookModel(bookModel);
 
-        BeanUtils.copyProperties(transaction, model);
-        return model;
-    }
+			BeanUtils.copyProperties(data, detail);
+			details.add(detail);
+		});
+		model.setDetails(details);
 
-    public static List<TransactionModel> constructModel(List<Transaction> transactions) {
-        List<TransactionModel> models = new ArrayList<>();
-        transactions.forEach(transaction -> {
-            TransactionModel model = constructModel(transaction);
-            models.add(model);
-        });
-        return models;
-    }
+		BeanUtils.copyProperties(transaction, model);
+		return model;
+	}
+
+	public static List<TransactionModel> constructModel(List<Transaction> transactions) {
+		List<TransactionModel> models = new ArrayList<>();
+		transactions.forEach(transaction -> {
+			TransactionModel model = constructModel(transaction);
+			models.add(model);
+		});
+		return models;
+	}
 }

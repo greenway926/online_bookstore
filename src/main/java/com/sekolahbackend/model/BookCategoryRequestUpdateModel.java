@@ -1,6 +1,9 @@
 package com.sekolahbackend.model;
 
+import javax.validation.constraints.NotNull;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -8,5 +11,8 @@ import lombok.Setter;
 @Setter
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class BookCategoryRequestUpdateModel extends BookCategoryRequestCreateModel {
-    private Integer id;
+
+	@NotNull
+	private Integer id;
+	
 }

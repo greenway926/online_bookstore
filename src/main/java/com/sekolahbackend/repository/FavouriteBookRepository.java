@@ -6,6 +6,7 @@ import com.sekolahbackend.entity.FavouriteBook;
 
 public interface FavouriteBookRepository extends JpaRepository<FavouriteBook, Integer> {
 
-    FavouriteBook findByUserId(Integer userId);
-
+	FavouriteBook findByUserId(Integer userId);
+	
+	FavouriteBook findByUserUsername(String username);
 }

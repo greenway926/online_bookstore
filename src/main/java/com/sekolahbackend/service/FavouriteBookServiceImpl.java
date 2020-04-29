@@ -28,110 +28,118 @@ import com.sekolahbackend.repository.UserRepository;
 @Service
 public class FavouriteBookServiceImpl implements FavouriteBookService {
 
-    @Autowired
-    private FavouriteBookRepository favouriteBookRepository;
+	@Autowired
+	private FavouriteBookRepository favouriteBookRepository;
+	
+	@Autowired
+	private FavouriteBookDetailRepository favouriteBookDetailRepository;
+	
+	@Autowired
+	private BookRepository bookRepository;
+	
+	@Autowired
+	private UserRepository userRepository;
+	
+	@Override
+	public FavouriteBookModel saveOrUpdate(FavouriteBookModel entity) {
+		return null;
+	}
 
-    @Autowired
-    private FavouriteBookDetailRepository favouriteBookDetailRepository;
+	@Override
+	@Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+	public FavouriteBookModel saveOrUpdate(FavouriteBookRequestModel request) {
+		// validate user
+		User user = userRepository.findById(request.getUserId()).orElse(null);
+		if (user == null)
+			throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "User with id: " + request.getUserId() + " not found");
+		
+		FavouriteBook favouriteBook = favouriteBookRepository.findByUserId(user.getId());
+		Set<FavouriteBookDetail> favouriteBookDetails = new HashSet<>();
+		// initialize
+		if (favouriteBook == null) {
+			favouriteBook = new FavouriteBook();
+			favouriteBook.setUser(user);
+			favouriteBook = favouriteBookRepository.save(favouriteBook);
+			
+			// validate book
+			Book book = bookRepository.findById(request.getBookId()).orElse(null);
+			if (book == null)
+				throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "Book with id: " + request.getBookId() + " not found");
+			
+			// detail
+			favouriteBookDetails.add(saveFavouriteBookDetail(favouriteBook, book));
+		} else {
+			// update
+			Book book = bookRepository.findById(request.getBookId()).orElse(null);
+			if (book == null)
+				throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "Book with id: " + request.getBookId() + " not found");
+			
+			List<FavouriteBookDetail> currentFavouriteBookDetails = favouriteBookDetailRepository.findByUserIdAndBookId(user.getId(), book.getId());
+			if (currentFavouriteBookDetails == null || currentFavouriteBookDetails.size() == 0)
+				favouriteBookDetails.add(saveFavouriteBookDetail(favouriteBook, book));
+		}
+		favouriteBook.setFavouriteBookDetails(favouriteBookDetails);
+		return constructModel(favouriteBook);
+	}
+	
+	private FavouriteBookDetail saveFavouriteBookDetail(FavouriteBook favouriteBook, Book book) {
+		FavouriteBookDetail favouriteBookDetail = new FavouriteBookDetail();
+		favouriteBookDetail.setBook(book);
+		favouriteBookDetail.setFavouriteBook(favouriteBook);
+		return favouriteBookDetailRepository.save(favouriteBookDetail);
+	}
 
-    @Autowired
-    private BookRepository bookRepository;
+	@Override
+	public FavouriteBookModel delete(FavouriteBookModel entity) {
+		return null;
+	}
 
-    @Autowired
-    private UserRepository userRepository;
+	@Override
+	public FavouriteBookModel deleteById(Integer id) {
+		return null;
+	}
+	
+	@Override
+	@Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+	public FavouriteBookModel deleteByFavouriteBookDetailId(Integer detailId) {
+		FavouriteBookDetail favouriteBookDetail = favouriteBookDetailRepository.findById(detailId).orElse(null);
+		if (favouriteBookDetail == null)
+			throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "Favourite Book Detail with id: " + detailId + " not found");
+		favouriteBookDetail.setStatus(Status.NOT_ACTIVE);
+		favouriteBookDetail = favouriteBookDetailRepository.save(favouriteBookDetail);
+		return constructModel(favouriteBookDetail.getFavouriteBook());
+	}
 
-    @Override
-    public FavouriteBookModel saveOrUpdate(FavouriteBookModel entity) {
-        return null;
-    }
+	@Override
+	@Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
+	public FavouriteBookModel findById(Integer id) {
+		return constructModel(favouriteBookRepository.findById(id).orElse(null));
+	}
 
-    @Override
-    @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public FavouriteBookModel saveOrUpdate(FavouriteBookRequestModel request) {
-        // validate user
-        User user = userRepository.findById(request.getUserId()).orElse(null);
-        if (user == null)
-            throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "User with id: " + request.getUserId() + " not found");
+	@Override
+	@Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
+	public List<FavouriteBookModel> findAll() {
+		return constructModel(favouriteBookRepository.findAll());
+	}
 
-        FavouriteBook favouriteBook = favouriteBookRepository.findByUserId(user.getId());
-        Set<FavouriteBookDetail> favouriteBookDetails = new HashSet<>();
-        // initialize
-        if (favouriteBook == null) {
-            favouriteBook = new FavouriteBook();
-            favouriteBook.setUser(user);
-            favouriteBook = favouriteBookRepository.save(favouriteBook);
+	@Override
+	@Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
+	public Long countAll() {
+		return favouriteBookRepository.count();
+	}
 
-            // validate book
-            Book book = bookRepository.findById(request.getBookId()).orElse(null);
-            if (book == null)
-                throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "Book with id: " + request.getBookId() + " not found");
+	@Override
+	@Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
+	public FavouriteBookModel findByUserId(Integer userId) {
+		return constructModel(favouriteBookRepository.findByUserId(userId));
+	}
 
-            // detail
-            favouriteBookDetails.add(saveFavouriteBookDetail(favouriteBook, book));
-        } else {
-            // update
-            Book book = bookRepository.findById(request.getBookId()).orElse(null);
-            if (book == null)
-                throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "Book with id: " + request.getBookId() + " not found");
-
-            List<FavouriteBookDetail> currentFavouriteBookDetails = favouriteBookDetailRepository.findByUserIdAndBookId(user.getId(), book.getId());
-            if (currentFavouriteBookDetails == null || currentFavouriteBookDetails.size() == 0)
-                favouriteBookDetails.add(saveFavouriteBookDetail(favouriteBook, book));
-        }
-        favouriteBook.setFavouriteBookDetails(favouriteBookDetails);
-        return constructModel(favouriteBook);
-    }
-
-    private FavouriteBookDetail saveFavouriteBookDetail(FavouriteBook favouriteBook, Book book) {
-        FavouriteBookDetail favouriteBookDetail = new FavouriteBookDetail();
-        favouriteBookDetail.setBook(book);
-        favouriteBookDetail.setFavouriteBook(favouriteBook);
-        return favouriteBookDetailRepository.save(favouriteBookDetail);
-    }
-
-    @Override
-    public FavouriteBookModel delete(FavouriteBookModel entity) {
-        return null;
-    }
-
-    @Override
-    public FavouriteBookModel deleteById(Integer id) {
-        return null;
-    }
-
-    @Override
-    @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public FavouriteBookModel deleteByFavouriteBookDetailId(Integer detailId) {
-        FavouriteBookDetail favouriteBookDetail = favouriteBookDetailRepository.findById(detailId).orElse(null);
-        if (favouriteBookDetail == null)
-            throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "Favourite Book Detail with id: " + detailId + " not found");
-        favouriteBookDetail.setStatus(Status.NOT_ACTIVE);
-        favouriteBookDetail = favouriteBookDetailRepository.save(favouriteBookDetail);
-        return constructModel(favouriteBookDetail.getFavouriteBook());
-    }
-
-    @Override
-    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
-    public FavouriteBookModel findById(Integer id) {
-        return constructModel(favouriteBookRepository.findById(id).orElse(null));
-    }
-
-    @Override
-    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
-    public List<FavouriteBookModel> findAll() {
-        return constructModel(favouriteBookRepository.findAll());
-    }
-
-    @Override
-    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
-    public Long countAll() {
-        return favouriteBookRepository.count();
-    }
-
-    @Override
-    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
-    public FavouriteBookModel findByUserId(Integer userId) {
-        return constructModel(favouriteBookRepository.findByUserId(userId));
-    }
-
+	@Override
+	@Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
+	public FavouriteBookModel findByUsername(String username) {
+		return constructModel(favouriteBookRepository.findByUserUsername(username));
+	}
+	
+	
+	
 }

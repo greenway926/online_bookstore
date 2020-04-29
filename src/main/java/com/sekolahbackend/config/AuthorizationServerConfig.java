@@ -11,42 +11,53 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.A
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
+
 import com.sekolahbackend.service.UserService;
 
 @Configuration
 @EnableAuthorizationServer
 public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdapter {
-    @Autowired
+
+	@Autowired
     private AuthenticationManager authenticationManager;
-    @Autowired
+
+	@Autowired
     private PasswordEncoder passwordEncoder;
-    @Autowired
+
+	@Autowired
     private UserService userService;
-    @Value("${security.oauth2.resource.id}")
+	
+	@Value("${security.oauth2.resource.id}")
     private String resourceId;
-    @Value("${security.oauth2.client.id}")
+	
+	@Value("${security.oauth2.client.id}")
     private String clientId;
+
     @Value("${security.oauth2.client.client-secret}")
     private String clientSecret;
-    @Value("${security.oauth2.client.access-token-validity-seconds}")
+
+    @Value("${security.oauth2.client.access-token-validity-seconds}") 
     private int accessTokenValiditySeconds;
-    @Value("${security.oauth2.client.refresh-token-validity-seconds}")
+
+    @Value("${security.oauth2.client.refresh-token-validity-seconds}") 
     private int refreshTokenValiditySeconds;
+
     @Value("${security.oauth2.client.authorized-grant-types}")
     private String[] authorizedGrantTypes;
+    
     @Value("${security.oauth2.client.scope}")
     private String[] scopes;
 
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
-        clients.inMemory()
-                .withClient(clientId)
-                .secret(passwordEncoder.encode(clientSecret))
-                .accessTokenValiditySeconds(accessTokenValiditySeconds) // 12 hours
-                .refreshTokenValiditySeconds(refreshTokenValiditySeconds) // 30 days
-                .authorizedGrantTypes(authorizedGrantTypes)
-                .scopes(scopes)
-                .resourceIds(resourceId);
+    	clients.inMemory()
+	        .withClient(clientId)
+	        .secret(passwordEncoder.encode(clientSecret))
+	        .accessTokenValiditySeconds(accessTokenValiditySeconds) // 12 hours
+	        .refreshTokenValiditySeconds(refreshTokenValiditySeconds) // 30 days
+	        .authorizedGrantTypes(authorizedGrantTypes)
+	        .scopes(scopes)
+	        .resourceIds(resourceId);
     }
 
     @Override
@@ -61,4 +72,5 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
     JwtAccessTokenConverter accessTokenConverter() {
         return new JwtAccessTokenConverter();
     }
+
 }

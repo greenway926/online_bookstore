@@ -14,19 +14,20 @@ import lombok.Setter;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class BookModel extends PersistenceModel {
 
-    private String title;
-    private String isbn;
-    private String authorName;
-    private String synopsis;
-
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss", timezone = "GMT+7")
-    private Date publicationDate;
-
-    private Double price;
-
-    private Integer bookCategoryId;
-
-    private BookCategoryModel bookCategory;
-
-    private Book.BookStatus bookStatus;
+	private String title;
+	private String isbn;
+	private String authorName;
+	private String synopsis;
+	private String imageUrl;
+	
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss", timezone = "GMT+7")
+	private Date publicationDate;
+	
+	private Double price;
+	
+	private Integer bookCategoryId;
+	
+	private BookCategoryModel bookCategory;
+	
+	private Book.BookStatus bookStatus;
 }
