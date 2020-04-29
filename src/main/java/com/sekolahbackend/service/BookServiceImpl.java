@@ -2,7 +2,6 @@ package com.sekolahbackend.service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +10,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.HttpServerErrorException;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.sekolahbackend.entity.Book;
 import com.sekolahbackend.entity.BookCategory;
@@ -23,146 +21,120 @@ import com.sekolahbackend.repository.BookRepository;
 
 @Service
 public class BookServiceImpl implements BookService {
-	
-	@Autowired
-	private BookRepository bookRepository;
-	
-	@Autowired
-	private BookCategoryRepository bookCategoryRepository;
-	
-	@Autowired
-	private MinioService minioService;
 
-	@Override
-	@Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-	public BookModel saveOrUpdate(BookModel entity) {
-		Book book;
-		BookCategory bookCategory;
-		if (entity.getId() != null) {
-			book = bookRepository.findById(entity.getId()).orElse(null);
-			if (book == null)
-				throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "Book with id: " + entity.getId() + " not found");
-			if (!book.getBookCategory().getId().equals(entity.getBookCategoryId())) {
-				bookCategory = bookCategoryRepository.findById(entity.getBookCategoryId()).orElse(null);
-				book.setBookCategory(bookCategory);
-			}
-			BeanUtils.copyProperties(entity, book);
-			book = bookRepository.save(book);
-		} else {
-			bookCategory = bookCategoryRepository.findById(entity.getBookCategoryId()).orElse(null);
-			if (bookCategory == null)
-				throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "Book Category with id: " + entity.getId() + " not found");
-			book = new Book();
-			book.setBookCategory(bookCategory);
-			BeanUtils.copyProperties(entity, book);
-			book = bookRepository.save(book);
-		}
-		BookCategoryModel bookCategoryModel = new BookCategoryModel();
-		BeanUtils.copyProperties(book.getBookCategory(), bookCategoryModel);
-		BeanUtils.copyProperties(book, entity);
-		entity.setBookCategoryId(book.getBookCategory().getId());
-		entity.setBookCategory(bookCategoryModel);
-		return entity;
-	}
+    @Autowired
+    private BookRepository bookRepository;
 
-	@Override
-	@Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-	public BookModel delete(BookModel entity) {
-		if (entity.getId() != null) {
-			Book book = bookRepository.findById(entity.getId()).orElse(null);
-			if (book == null)
-				throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "Book with id: " + entity.getId() + " not found");
+    @Autowired
+    private BookCategoryRepository bookCategoryRepository;
 
-			book.setStatus(Status.NOT_ACTIVE);
-			book = bookRepository.save(book);
-			BeanUtils.copyProperties(book, entity);
-			return entity;
-		} else
-			throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "Id cannot be null");
-	}
+    @Override
+    @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public BookModel saveOrUpdate(BookModel entity) {
+        Book book;
+        BookCategory bookCategory;
+        if (entity.getId() != null) {
+            book = bookRepository.findById(entity.getId()).orElse(null);
+            if (book == null)
+                throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "Book with id: " + entity.getId() + " not found");
+            if (!book.getBookCategory().getId().equals(entity.getBookCategoryId())) {
+                bookCategory = bookCategoryRepository.findById(entity.getBookCategoryId()).orElse(null);
+                book.setBookCategory(bookCategory);
+            }
+            BeanUtils.copyProperties(entity, book);
+            book = bookRepository.save(book);
+        } else {
+            bookCategory = bookCategoryRepository.findById(entity.getBookCategoryId()).orElse(null);
+            if (bookCategory == null)
+                throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "Book Category with id: " + entity.getId() + " not found");
+            book = new Book();
+            book.setBookCategory(bookCategory);
+            BeanUtils.copyProperties(entity, book);
+            book = bookRepository.save(book);
+        }
+        BookCategoryModel bookCategoryModel = new BookCategoryModel();
+        BeanUtils.copyProperties(book.getBookCategory(), bookCategoryModel);
+        BeanUtils.copyProperties(book, entity);
+        entity.setBookCategoryId(book.getBookCategory().getId());
+        entity.setBookCategory(bookCategoryModel);
+        return entity;
+    }
 
-	@Override
-	@Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-	public BookModel deleteById(Integer id) {
-		if (id != null) {
-			BookModel entity = new BookModel();
-			Book book = bookRepository.findById(id).orElse(null);
-			if (book == null)
-				throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "Book with id: " + id + " not found");
-			
-			book.setStatus(Status.NOT_ACTIVE);
-			book = bookRepository.save(book);
+    @Override
+    @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public BookModel delete(BookModel entity) {
+        if (entity.getId() != null) {
+            Book book = bookRepository.findById(entity.getId()).orElse(null);
+            if (book == null)
+                throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "Book with id: " + entity.getId() + " not found");
 
-			BeanUtils.copyProperties(book, entity);
-			return entity;
-		} else
-			throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "Id cannot be null");
-	}
+            book.setStatus(Status.NOT_ACTIVE);
+            book = bookRepository.save(book);
+            BeanUtils.copyProperties(book, entity);
+            return entity;
+        } else
+            throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "Id cannot be null");
+    }
 
-	@Override
-	@Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
-	public BookModel findById(Integer id) {
-		if (id != null) {
-			BookModel entity = new BookModel();
-			Book book = bookRepository.findById(id).orElse(null);
-			if (book == null)
-				throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "Book with id: " + id + " not found");
-			
-			BookCategoryModel bookCategoryModel = new BookCategoryModel();
-			BeanUtils.copyProperties(book.getBookCategory(), bookCategoryModel);
-			entity.setBookCategoryId(book.getBookCategory().getId());
-			entity.setBookCategory(bookCategoryModel);
-			
-			BeanUtils.copyProperties(book, entity);
-			return entity;
-		} else
-			throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "Id cannot be null");
-	}
+    @Override
+    @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public BookModel deleteById(Integer id) {
+        if (id != null) {
+            BookModel entity = new BookModel();
+            Book book = bookRepository.findById(id).orElse(null);
+            if (book == null)
+                throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "Book with id: " + id + " not found");
 
-	@Override
-	@Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
-	public List<BookModel> findAll() {
-		List<BookModel> entities = new ArrayList<>();
-		bookRepository.findAll().forEach(data -> {
-			BookModel entity = new BookModel();
-			BeanUtils.copyProperties(data, entity);
+            book.setStatus(Status.NOT_ACTIVE);
+            book = bookRepository.save(book);
 
-			BookCategoryModel bookCategoryModel = new BookCategoryModel();
-			BeanUtils.copyProperties(data.getBookCategory(), bookCategoryModel);
-			entity.setBookCategoryId(data.getBookCategory().getId());
-			entity.setBookCategory(bookCategoryModel);
-			
-			entities.add(entity);
-		});
-		return entities;
-	}
+            BeanUtils.copyProperties(book, entity);
+            return entity;
+        } else
+            throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "Id cannot be null");
+    }
 
-	@Override
-	@Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
-	public Long countAll() {
-		return bookRepository.count();
-	}
+    @Override
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
+    public BookModel findById(Integer id) {
+        if (id != null) {
+            BookModel entity = new BookModel();
+            Book book = bookRepository.findById(id).orElse(null);
+            if (book == null)
+                throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "Book with id: " + id + " not found");
 
-	@Override
-	@Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-	public BookModel uploadImage(Integer id, MultipartFile file) {
-		BookModel entity = new BookModel();
-		Book book = bookRepository.findById(id).orElse(null);
-		if (book == null)
-			throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "Book with id: " + id + " not found");
-		
-		// upload image
-		try {
-			String imageUrl = minioService.uploadImage(UUID.randomUUID().toString(),
-					file.getInputStream(), file.getContentType());
-			book.setImageUrl(imageUrl);
-			book = bookRepository.save(book);
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "Problem upload file");
-		}
-		BeanUtils.copyProperties(book, entity);
-		return entity;
-	}
-	
+            BookCategoryModel bookCategoryModel = new BookCategoryModel();
+            BeanUtils.copyProperties(book.getBookCategory(), bookCategoryModel);
+            entity.setBookCategoryId(book.getBookCategory().getId());
+            entity.setBookCategory(bookCategoryModel);
+
+            BeanUtils.copyProperties(book, entity);
+            return entity;
+        } else
+            throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, "Id cannot be null");
+    }
+
+    @Override
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
+    public List<BookModel> findAll() {
+        List<BookModel> entities = new ArrayList<>();
+        bookRepository.findAll().forEach(data -> {
+            BookModel entity = new BookModel();
+            BeanUtils.copyProperties(data, entity);
+
+            BookCategoryModel bookCategoryModel = new BookCategoryModel();
+            BeanUtils.copyProperties(data.getBookCategory(), bookCategoryModel);
+            entity.setBookCategoryId(data.getBookCategory().getId());
+            entity.setBookCategory(bookCategoryModel);
+
+            entities.add(entity);
+        });
+        return entities;
+    }
+
+    @Override
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
+    public Long countAll() {
+        return bookRepository.count();
+    }
 }

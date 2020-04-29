@@ -13,18 +13,18 @@ import lombok.Setter;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class CartModel extends PersistenceModel {
 
-	private UserModel userModel;
-	
-	private List<DetailModel> details;
-	
-	@Getter
-	@Setter
-	@JsonIgnoreProperties(ignoreUnknown = true)
-	public static class DetailModel extends PersistenceModel {
-		
-		private BookModel bookModel;
-		
-		private CartDetailStatus cartDetailStatus;
-	
-	}
+    private UserModel userModel;
+
+    private List<DetailModel> details;
+
+    @Getter
+    @Setter
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class DetailModel extends PersistenceModel {
+
+        private BookModel bookModel;
+
+        private CartDetailStatus cartDetailStatus;
+
+    }
 }

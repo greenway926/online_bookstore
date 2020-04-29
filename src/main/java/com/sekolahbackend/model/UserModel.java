@@ -10,10 +10,10 @@ import lombok.Setter;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class UserModel extends PersistenceModel {
 
-	private String username;
-	private String fullName;
-	private String email;
-	private String phoneNumber;
-	private String address;
-	
+    private String username;
+    private String fullName;
+    private String email;
+    private String phoneNumber;
+    private String address;
+
 }

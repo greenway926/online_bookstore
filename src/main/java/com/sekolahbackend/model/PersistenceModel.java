@@ -13,16 +13,16 @@ import lombok.Data;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PersistenceModel {
 
-	@NotNull
-	private Integer id;
-	
-	private String createdBy;
-	private String updatedBy;
+    @NotNull
+    private Integer id;
 
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss", timezone = "GMT+7")
-	private Date createdTime;
-	
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss", timezone = "GMT+7")
-	private Date updatedTime;
-	
+    private String createdBy;
+    private String updatedBy;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss", timezone = "GMT+7")
+    private Date createdTime;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss", timezone = "GMT+7")
+    private Date updatedTime;
+
 }

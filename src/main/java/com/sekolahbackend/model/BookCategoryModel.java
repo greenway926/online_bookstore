@@ -1,17 +1,18 @@
 package com.sekolahbackend.model;
 
+import java.util.Date;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.Data;
 
-import lombok.Getter;
-import lombok.Setter;
-
-@Getter
-@Setter
+@Data
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class BookCategoryModel extends PersistenceModel {
-	
-	private String name;
-
-	private String code;
-
+public class BookCategoryModel {
+    private Integer id;
+    private String name;
+    private String code;
+    private String createdBy;
+    private String updatedBy;
+    private Date createdTime;
+    private Date updatedTime;
 }

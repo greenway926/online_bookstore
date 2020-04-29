@@ -8,5 +8,6 @@ import com.sekolahbackend.entity.Shipment;
 
 public interface ShipmentRepository extends JpaRepository<Shipment, Integer> {
 
-	List<Shipment> findByUserId(Integer userId);
+    List<Shipment> findByUserId(Integer userId);
 }
+

@@ -12,6 +12,6 @@ import lombok.Setter;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class BookRequestUpdateModel extends BookRequestCreateModel {
 
-	@NotNull
-	private Integer id;
+    @NotNull
+    private Integer id;
 }

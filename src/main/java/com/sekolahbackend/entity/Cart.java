@@ -21,14 +21,13 @@ import lombok.Setter;
 @Table(name = "cart")
 @Where(clause = "status = 'ACTIVE'")
 public class Cart extends Persistence {
-	private static final long serialVersionUID = 5408939619179332778L;
+    private static final long serialVerionUID = 540893961917332778L;
 
-	@JoinColumn(name = "user_id")
-	@OneToOne(targetEntity = User.class, fetch = FetchType.LAZY)
-	private User user;
-	
-	@Where(clause = "status = 'ACTIVE'")
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "cart", fetch = FetchType.LAZY)
-	private Set<CartDetail> cartDetails;
-	
+    @JoinColumn(name = "user_id")
+    @OneToOne(targetEntity = User.class, fetch = FetchType.LAZY)
+    private User user;
+
+    @Where(clause = "status = 'ACTIVE'")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "cart", fetch = FetchType.LAZY)
+    private Set<CartDetail> cartDetails;
 }
