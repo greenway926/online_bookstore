@@ -23,7 +23,6 @@ import io.swagger.annotations.Api;
 @Api
 @RestController
 @RequestMapping("/api/rest/user")
-@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_CLIENT')")
 public class UserRestController {
 	
 	@Autowired
