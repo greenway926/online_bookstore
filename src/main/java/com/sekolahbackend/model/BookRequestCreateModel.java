@@ -14,27 +14,27 @@ import lombok.Data;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class BookRequestCreateModel {
 
-    @NotBlank
-    private String title;
-
-    @NotBlank
-    private String isbn;
-
-    @NotBlank
-    private String authorName;
-
-    @NotBlank
-    private String synopsis;
-
-    @NotNull
-    private Date publicationDate;
-
-    @NotNull
-    private Double price;
-
-    @NotNull
-    private Integer bookCategoryId;
-
-    @NotNull
-    private Book.BookStatus bookStatus;
+	@NotBlank
+	private String title;
+	
+	@NotBlank
+	private String isbn;
+	
+	@NotBlank
+	private String authorName;
+	
+	@NotBlank
+	private String synopsis;
+	
+	@NotNull
+	private Date publicationDate;
+	
+	@NotNull
+	private Double price;
+	
+	@NotNull
+	private Integer bookCategoryId;
+	
+	@NotNull
+	private Book.BookStatus bookStatus;
 }

@@ -11,17 +11,17 @@ import lombok.Setter;
 @Setter
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class FavouriteBookModel extends PersistenceModel {
-
-    private UserModel userModel;
-
-    private List<DetailModel> details;
-
-    @Getter
-    @Setter
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    public static class DetailModel extends PersistenceModel {
-
-        private BookModel bookModel;
-
-    }
+	
+	private UserModel userModel;
+	
+	private List<DetailModel> details;
+	
+	@Getter
+	@Setter
+	@JsonIgnoreProperties(ignoreUnknown = true)
+	public static class DetailModel extends PersistenceModel {
+		
+		private BookModel bookModel;
+		
+	}
 }

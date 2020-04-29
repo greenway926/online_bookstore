@@ -19,26 +19,26 @@ import com.sekolahbackend.service.UserService;
 @EnableGlobalMethodSecurity(prePostEnabled = true, proxyTargetClass = true)
 public class ServerSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    @Autowired
-    private UserService userService;
+	@Autowired
+	private UserService userService;
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+	@Bean
+	public PasswordEncoder passwordEncoder() {
+		return new BCryptPasswordEncoder();
+	}
 
-    @Bean
-    @Override
-    public AuthenticationManager authenticationManagerBean() throws Exception {
-        return super.authenticationManagerBean();
-    }
+	@Bean
+	@Override
+	public AuthenticationManager authenticationManagerBean() throws Exception {
+		return super.authenticationManagerBean();
+	}
 
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userService).passwordEncoder(passwordEncoder());
-    }
-
-    @Override
+	@Override
+	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+		auth.userDetailsService(userService).passwordEncoder(passwordEncoder());
+	}
+	
+	@Override
     public void configure(WebSecurity web) {
         web.ignoring().antMatchers(
                 "/v2/api-docs",
@@ -46,7 +46,6 @@ public class ServerSecurityConfig extends WebSecurityConfigurerAdapter {
                 "/swagger-resources/**",
                 "/configuration/security/**",
                 "/swagger-ui.html",
-                "/webjars/**",
-                "/api/user/register");
+                "/webjars/**");
     }
 }

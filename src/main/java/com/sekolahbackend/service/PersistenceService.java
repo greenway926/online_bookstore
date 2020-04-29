@@ -3,15 +3,16 @@ package com.sekolahbackend.service;
 import java.util.List;
 
 public interface PersistenceService<T, ID> {
-    T saveOrUpdate(T entity);
 
-    T delete(T entity);
+	T saveOrUpdate(T entity);
 
-    T deleteById(ID id);
+	T delete(T entity);
 
-    T findById(ID id);
+	T deleteById(ID id);
 
-    List<T> findAll();
+	T findById(ID id);
 
-    Long countAll();
+	List<T> findAll();
+	
+	Long countAll();
 }

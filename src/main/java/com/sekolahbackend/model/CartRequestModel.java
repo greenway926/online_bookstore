@@ -10,10 +10,10 @@ import lombok.Data;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class CartRequestModel {
 
-    @NotNull
-    private Integer userId;
-
-    @NotNull
-    private Integer bookId;
-
+	@NotNull
+	private Integer userId;
+	
+	@NotNull
+	private Integer bookId;
+	
 }
